@@ -204,14 +204,16 @@ public:
         a = new_arr;
     }
 
-    void Shell_sort()
+    void Shell_sort()//выбор шага, сортировка подмассивов, уменьшение шага
     {
          int h = 1;
         while (h < n / 3)
         {
-            h = 3 * h + 1; // Вычисление шага сортировки
+            //h = 3 * h + 1; //шаг 1 4 13
+            h = h * 2 + 1;//шаг 1 3 7
         }
-        while (h >= 1) {
+        while (h >= 1)
+        {
             for (int i = h; i < n; ++i)
             {
                 int j = i;
@@ -227,8 +229,40 @@ public:
 
     void Heap_sort()
     {
+        int j = n / 2 - 1;
+        for(int i = j; i >= 0; --i)
+        {
+            pyramid(i, n);
+        }
+
+        int k = n - 1;
+        for(int i = k; i >= 0; --i)
+        {
+            swap(a[0], a[i]);
+            pyramid(0, i);
+        }
 
     }
+
+    void pyramid(int i , int size)
+    {
+        int largest = i;
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+
+        if(left < size && a[left] > a[largest])
+            largest = left;
+
+        if(right < size && a[right] > a[largest])
+            largest = right;
+
+        if(largest != i)
+        {
+            swap(a[i], a[largest]);
+            pyramid(largest, size);
+        }
+    }
+
 
     void Hoar_sort()
     {
@@ -271,32 +305,32 @@ int main()
     srand(time(0));
 
     Array a1(10, 1, 20);
-    cout << a1;
+    cout << "Non sorted - " << a1;
 
 
     a1.Shell_sort();
-    cout << a1;
+    cout << "Sorted" << a1 << endl;
 
 
     Array a2(10, 1, 10);
-    cout << a2;
+    cout << "Non sorted - " << a2;
 
 
     a2.Heap_sort();
-    cout << a2;
+    cout << "Sorted" << a2;
 
-    Array a3(15, 1, 20);
-    cout << a3;
+//    Array a3(15, 1, 20);
+//    cout << a3;
 
-    a3.Hoar_sort();
-    cout << a3;
+//    a3.Hoar_sort();
+//    cout << a3;
 
 
-    Array a4(15, 1, 15);
-    cout << a4;
+//    Array a4(15, 1, 15);
+//    cout << a4;
 
-    a4.Bit_sort();
-    cout << a4;
+//    a4.Bit_sort();
+//    cout << a4;
 
 
     return 0;
