@@ -14,16 +14,23 @@ class Array
 
 public:
 
+
+
     Array (int len = 1, int t = 1, int d = 10) /*: n(len)*/
     {
         n = len;
         a = new int[n];
 
-        if(t == 1)
+        if(t > 3 || t < 1)
+        {
+            for(int i = 0; i < n; ++i)
+                a[i] = 0;
+        }
+        else if(t == 1)
         {
             for(int  i = 0; i < n; ++i)
             {
-                a[i] = rand() % d + 1;
+                a[i] = rand() % (d + 1);
             }
         }
 
@@ -44,40 +51,16 @@ public:
                 a[i] = a[i + 1] + rand() % (d + 1);
             }
         }
-        else
-        {
-            for(int i = 0; i < n; ++i)
-            {
-                a[i] = 0;
-            }
-        }
     }
 
     Array(int *arr , int len) : n(len)
-    {
-        a = new int[n];
-        for(int i = 0; i < n; ++i)
-        {
-            a[i] = arr[i];
-        }
-    }
-    
-//   Array(int first, int step, int len)
-//   {
-//       if(len <= 0)
-//       {
-//           cout << "Error size" << endl;
-//           exit(-1);
-//       }
-//       n = len;
-
-//       a = new int[n];
-//       a[0] = first;
-//       for(size_t i = 1; i < n; ++i)
-//       {
-//           a[i] = a[i - 1] + step;
-//       }
-//   }
+   {
+       a = new int[n];
+       for(int i = 0; i < n; ++i)
+       {
+           a[i] = arr[i];
+       }
+   }
 
     Array(Array &other)
    {
@@ -113,59 +96,6 @@ public:
             a[i] = other.a[i];
         }
         return *this;
-    }
-
-//    Array operator+(Array other)
-//    {
-//        size_t new_len = n + other.n;
-//        int *new_arr = new int[new_len];
-//        size_t i = 0, j = 0, k = 0;
-
-
-//        while(i < n && j < other.n)
-//        {
-//            if(a[i] < other.a[j])
-//            {
-//                new_arr[k++] = a[i++];
-//            }
-//            else
-//            {
-//                new_arr[k++] = other.a[j++];
-//            }
-
-//        }
-
-//        while(i < n)
-//        {
-//            new_arr[k++] = a[i++];
-//        }
-
-//        while(j < other.n)
-//        {
-//            new_arr[k++] = other.a[j++];
-//        }
-
-//    }
-    Array operator+(Array other)
-    {
-        int new_len = n + other.n;
-        int *new_arr = new int[new_len];
-        
-        for(int i = 0; i < n; ++i)
-        {
-            new_arr[i] = a[i];
-        }
-        for(int i = 0; i < other.n; ++i)
-        {
-            new_arr[i + n] = other.a[i];
-        }
-        
-        new_arr.sort();
-        Array res(0, 0, 0);
-        res.a = new_arr;
-        res.n = new_int;
-        
-        return res;
     }
 
     int& operator[](int ix)
@@ -205,53 +135,47 @@ public:
         return true;
     }
 
-    void operator-(int k)
+
+
+//    void Shell_sort()//выбор шага, сортировка подмассивов, уменьшение шага
+//    {
+//         int h = 1;
+//        while (h < n / 3)
+//        {
+//            //h = 3 * h + 1; //шаг 1 4 13
+//            h = h * 2 + 1;//шаг 1 3 7
+//        }
+//        while (h >= 1)
+//        {
+//            for (int i = h; i < n; ++i)
+//            {
+//                int j = i;
+//                while (j >= h && a[j - h] > a[j])
+//                {
+//                    swap(a[j - h], a[j]);
+//                    j -= h;
+//                }
+//            }
+//            h /= 3;
+//        }
+//    }
+
+    void Shell_sort()
     {
-        size_t new_len = 0;
-        for(int i = 0; i < n; ++i)
+        for(int step = n / 2; step > 0; step /= 2)//начинаем с половины масива
         {
-            if(a[i] != k)
-                ++new_len;
-
-        }
-
-        int *new_arr = new int[new_len];
-        int j = 0;
-        for(int i = 0; i < n; ++i)
-        {
-            if(a[i] != k)
+            for(int i = step; i < n; ++i)//елемент i  сравниваем с элементом на step левее
             {
-                new_arr[j++] = a[i];
+                int tmp = a[i];//запоминаем текущий элемент
+
+                int j;
+
+                for(j = i; j >= step && a[j - step] > tmp; j -= step)//првоерка что мы не вышли за масив
+                    //сравниваем элемент j - step с текущим tmp
+                    a[j] = a[j - step];//сдвигаем влево
+
+                a[j] = tmp;//вставка элемента на место
             }
-        }
-
-        delete []a;
-        a = NULL;
-
-        n = new_len;
-        a = new_arr;
-    }
-
-    void Shell_sort()//выбор шага, сортировка подмассивов, уменьшение шага
-    {
-         int h = 1;
-        while (h < n / 3)
-        {
-            //h = 3 * h + 1; //шаг 1 4 13
-            h = h * 2 + 1;//шаг 1 3 7
-        }
-        while (h >= 1)
-        {
-            for (int i = h; i < n; ++i)
-            {
-                int j = i;
-                while (j >= h && a[j - h] > a[j])
-                {
-                    swap(a[j - h], a[j]);
-                    j -= h;
-                }
-            }
-            h /= 3;
         }
     }
 
@@ -291,11 +215,71 @@ public:
         }
     }
 
-
-    void Hoar_sort()
+    int change(int *arr, int l, int r)//функция сортировки для удобства
     {
+        if (l >= r) {
+            return 0;
+        }
+        int i = l;
+        int j = r;
+        int x = arr[(l + r) / 2];
+        while (i <= j) {
+            while (arr[i] < x) {
+                i++;
+            }
+            while (arr[j] > x) {
+                j--;
+            }
+            if (i <= j) {
+                swap(arr[i], arr[j]);
+                i++;
+                j--;
+            }
+        }
 
+        change(arr, l, j);//вызов рекурсии
+        change(arr, i, r);//вызов рекурсии
+        return 0;
     }
+
+
+    void Hoar_sort()//сортировка Хоара
+    {
+        change(a, 0, n - 1);
+    }
+
+//    void Hoar_sort()
+//    {
+//        qsort(0, n - 1);
+//    }
+
+//    void qsort(int low, int high)
+//    {
+//        if(low < high)
+//        {
+//            int pi = help_Hoar(low, high);
+
+//            qsort(low, pi - 1);
+//            qsort(pi + 1, high);
+//        }
+//    }
+
+//    int help_Hoar(int l, int r)
+//    {
+//        int pivot = a[r];
+//        int i = l - 1;
+//        for(int j = l; j < r; j++)
+//        {
+//            if(a[j] <= pivot)
+//            {
+//                i++;
+//                swap(a[i] , a[j]);
+//            }
+//        }
+
+//        swap(a[i + 1], a[r]);
+//        return (i + 1);
+//    }
 
     void Bit_sort()
     {
@@ -327,41 +311,30 @@ public:
 
 
 
-
 int main()
 {
     srand(time(0));
-    
-    Array arr(10, 5 , 2);
-    cout << arr << endl;
 
     Array a1(10, 1, 20);
-    
-    Array a3;
-    cout << a3 << endl;
-    
-    a3 = arr + a1;
-    cout << a1 << endl;
-    cout << a3 << endl;
-    // cout << "Non sorted - " << a1;
+    cout << "a1 non sorted - " << a1;
 
 
-    // a1.Shell_sort();
-    // cout << "Sorted" << a1 << endl;
+    a1.Shell_sort();
+    cout << "a1 sorted " << a1 << endl;
 
 
-    // Array a2(10, 1, 10);
-    // cout << "Non sorted - " << a2;
+//    Array a2(10, 1, 10);
+//    cout << "a2 non sorted - " << a2 << endl;
 
 
-    // a2.Heap_sort();
-    // cout << "Sorted" << a2;
+//    a2.Heap_sort();
+//    cout << "a2 sorted " << a2 << endl;
 
 //    Array a3(15, 1, 20);
-//    cout << a3;
+//    cout << "a3 non sorted - " <<  a3 << endl;
 
 //    a3.Hoar_sort();
-//    cout << a3;
+//    cout << "a3 sorted " << a3 << endl;
 
 
 //    Array a4(15, 1, 15);
