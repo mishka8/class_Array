@@ -135,98 +135,155 @@ public:
         return true;
     }
 
-
-
-    void Shell_sort()//выбор шага, сортировка подмассивов, уменьшение шага
+    void Shell_sort()
     {
-         int h = 1;
-        while (h < n / 3)
+        for(int step = n / 2; step > 0; step /= 2)//начинаем с половины масива
         {
-            //h = 3 * h + 1; //шаг 1 4 13
-            h = h * 2 + 1;//шаг 1 3 7
-        }
-        while (h >= 1)
-        {
-            for (int i = h; i < n; ++i)
+            for(int i = 1; i < n; i+=step)//елемент i  сравниваем с элементом на step левее
             {
-                int j = i;
-                while (j >= h && a[j - h] > a[j])
+                //cout << i << "----------";
+                int tmp = a[i];//запоминаем текущий элемент
+
+                int j;
+
+                for(j = i; j >= step && a[j - step] > tmp; j -= step)//првоерка что мы не вышли за масив
                 {
-                    swap(a[j - h], a[j]);
-                    j -= h;
+                    //cout << "i = " << i <<  " ----  j = " << j << " =====  [j - step] = " << j - step << " === === a[j - step] = " << a[j - step] << " > " << tmp << " = tmp" << endl;
+                    //сравниваем элемент j - step с текущим tmp
+                    a[j] = a[j - step];//сдвигаем влево
                 }
+                //cout << endl << endl;
+
+
+                a[j] = tmp;//вставка элемента на место
+//                for(int h = 0; h < n; ++h)
+//                    cout << a[h] << "  ";
             }
-            h /= 3;
+//            cout << endl;
         }
     }
 
-    void Heap_sort()
-    {
-        int j = n / 2 - 1;
-        for(int i = j; i >= 0; --i)
-        {
-            pyramid(i, n);
-        }
-
-        int k = n - 1;
-        for(int i = k; i >= 0; --i)
-        {
-            swap(a[0], a[i]);
-            pyramid(0, i);
-        }
-
-    }
-
-    void pyramid(int i , int size)
+    void help_Heap(int n, int i)
     {
         int largest = i;
         int left = 2 * i + 1;
         int right = 2 * i + 2;
 
-        if(left < size && a[left] > a[largest])
+        if(left < n && a[left] > a[largest])
             largest = left;
 
-        if(right < size && a[right] > a[largest])
+        if(right < n && a[right] > a[largest])
             largest = right;
 
         if(largest != i)
         {
             swap(a[i], a[largest]);
-            pyramid(largest, size);
+
+            help_Heap(n, largest);
         }
     }
 
+    void Heap_sort()
+    {
+        for(int i = n / 2 - 1; i >= 0; i--)
+            help_Heap(n, i);
+
+        for(int i = n - 1;  i >= 0; i--)
+        {
+            swap(a[0], a[i]);
+
+            help_Heap(i, 0);
+        }
+    }
+
+    int change(int *arr, int left, int right)
+    {
+        if(left >= right)
+            return 0;
+
+        int i = left;
+        int j = right;
+        int x = arr[(left + right) / 2];//опорный елемент
+        while(i <= j)
+        {
+            while(arr[i] < x)
+                //сравниеваем слева
+                i++;
+
+            while(arr[j] > x)//сравниваем справа
+                j--;
+
+            if(i <= j)
+            {
+                swap(arr[i], arr[j]);
+                i++;
+                j--;
+            }
+
+        }
+        //слева меньше опроного справа больше опорного
+        //с помощью рекурсии сортируем правую и левую части
+        //каждый раз масив разбивается на два меньших и тем самым сортируется
+        change(arr, left, j);
+        change(arr, i, right);
+        return 0;
+    }
 
     void Hoar_sort()
     {
-
+        change(a, 0, n - 1);
     }
 
-    int help_Hoar(int l, int r)
+    int main_bit()//поиск главного бита
     {
-        int pivot = a[r];
-        int i = l - 1;
-        for(int j = l; j < r; j++)
+        int max = a[0];
+        for (int i = 0; i < n; i++)
         {
-            if(a[j] <= pivot)
-            {
-                i++;
-                swap(a[i] , a[j]);
-            }
+            if (a[i] > max) max = a[i];
         }
 
-        swap(a[i + 1], a[r]);
-        return (i + 1);
+        int k = 0;
+
+        while (max)
+        {
+            max >>= 1;
+            k++;
+        }
+        return k - 1;
     }
 
-    void Bit_sort()
+    void Bit_sort(int l = 0, int r = 0, int k = 0, bool flag = true)
     {
+        if (flag)
+        {
+            flag = false;
+            l = 0;
+            r = n - 1;
+            k = this->main_bit();
+        }
+        if (!(l >= r || k < 0))
+        {
+            int i = l, j = r;
+            int mask = 1 << k;
+            while (i <= j)
+            {
+                while (i <= j && !(a[i] & mask))
+                    i++;
 
+                while (i <= j && a[j] & mask)
+                    j--;
+
+                if (i < j)
+                    swap(a[i++], a[j--]);
+            }
+            this->Bit_sort(l, j, k - 1, flag);
+            this->Bit_sort(i, r, k - 1, flag);
+        }
     }
 
     friend istream& operator>>(istream& in, Array& arr)
     {
-        for(size_t i = 0; i < arr.n; ++i)
+        for(int i = 0; i < arr.n; ++i)
         {
             in >> arr.a[i];
         }
@@ -236,7 +293,7 @@ public:
 
     friend ostream& operator<<(ostream& out, Array& arr)
     {
-        for(size_t i = 0; i < arr.n; ++i)
+        for(int i = 0; i < arr.n; ++i)
         {
             out << arr.a[i] << "  ";
         }
@@ -275,12 +332,11 @@ int main()
     a3.Hoar_sort();
     cout << "a3 sorted " << a3 << endl;
 
+    Array a4(15, 1, 500);
+    cout << a4;
 
-//    Array a4(15, 1, 15);
-//    cout << a4;
-
-//    a4.Bit_sort();
-//    cout << a4;
+    a4.Bit_sort();
+    cout << a4;
 
 
     return 0;
