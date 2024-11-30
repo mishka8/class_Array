@@ -123,43 +123,44 @@ public:
 
     bool operator==(Array other)
     {
-        if(n != other.n)
+        if (n != other.n)
             return false;
-
-        for(int i = 0; i < n; ++i)
+    int len = n;
+    for (int i = 0; i < n; i++) 
+    {
+        bool fl = false;
+        for (int j = 0; j < len; j++) 
         {
-            if(a[i] != other.a[i])
-                return false;
-
+            if (a[i] == other.a[j])
+            {
+                
+                fl = true;
+                other[j] = other[len - 1];
+                len--;
+                break;
+            }
         }
-        return true;
+        if (fl == false)
+            return false;
     }
+    return true;
+}
 
     void Shell_sort()
     {
         for(int step = n / 2; step > 0; step /= 2)//начинаем с половины масива
         {
-            for(int i = 1; i < n; i+=step)//елемент i  сравниваем с элементом на step левее
+            for(int i = 1; i < n; i+=step)//елемент i  сравниваем с элементом i + step 
             {
-                //cout << i << "----------";
                 int tmp = a[i];//запоминаем текущий элемент
-
                 int j;
-
+                
                 for(j = i; j >= step && a[j - step] > tmp; j -= step)//првоерка что мы не вышли за масив
                 {
-                    //cout << "i = " << i <<  " ----  j = " << j << " =====  [j - step] = " << j - step << " === === a[j - step] = " << a[j - step] << " > " << tmp << " = tmp" << endl;
-                    //сравниваем элемент j - step с текущим tmp
                     a[j] = a[j - step];//сдвигаем влево
                 }
-                //cout << endl << endl;
-
-
-                a[j] = tmp;//вставка элемента на место
-//                for(int h = 0; h < n; ++h)
-//                    cout << a[h] << "  ";
+                a[j] = tmp;
             }
-//            cout << endl;
         }
     }
 
@@ -181,6 +182,11 @@ public:
 
             help_Heap(n, largest);
         }
+        for(int i = 0; i < n; i++)
+        {
+            cout << a[i] << "  ";
+        }
+        cout << endl;
     }
 
     void Heap_sort()
@@ -234,53 +240,6 @@ public:
         change(a, 0, n - 1);
     }
 
-    int main_bit()//поиск главного бита
-    {
-        int max = a[0];
-        for (int i = 0; i < n; i++)
-        {
-            if (a[i] > max) max = a[i];
-        }
-
-        int k = 0;
-
-        while (max)
-        {
-            max >>= 1;
-            k++;
-        }
-        return k - 1;
-    }
-
-    void Bit_sort(int l = 0, int r = 0, int k = 0, bool flag = true)
-    {
-        if (flag)
-        {
-            flag = false;
-            l = 0;
-            r = n - 1;
-            k = this->main_bit();
-        }
-        if (!(l >= r || k < 0))
-        {
-            int i = l, j = r;
-            int mask = 1 << k;
-            while (i <= j)
-            {
-                while (i <= j && !(a[i] & mask))
-                    i++;
-
-                while (i <= j && a[j] & mask)
-                    j--;
-
-                if (i < j)
-                    swap(a[i++], a[j--]);
-            }
-            this->Bit_sort(l, j, k - 1, flag);
-            this->Bit_sort(i, r, k - 1, flag);
-        }
-    }
-
     friend istream& operator>>(istream& in, Array& arr)
     {
         for(int i = 0; i < arr.n; ++i)
@@ -305,38 +264,34 @@ public:
 };
 
 
-
-
 int main()
 {
-    srand(time(0));
+    //srand(time(0));
 
-    Array a1(10, 1, 20);
-    cout << "a1 non sorted - " << a1;
-
-
-    a1.Shell_sort();
-    cout << "a1 sorted " << a1 << endl;
+    // Array a1(10, 1, 20);
+    // cout << "a1 non sorted - " << a1;
 
 
-    Array a2(10, 1, 10);
+    // a1.Shell_sort();
+    // cout << "a1 sorted " << a1 << endl;
+    
+    int a[7] = {5, 1, 7, 14, 9, 8, 4};
+
+
+    // Array a2(10, 1, 10);
+    Array a2(a, 7);
     cout << "a2 non sorted - " << a2 << endl;
 
 
     a2.Heap_sort();
     cout << "a2 sorted " << a2 << endl;
 
-    Array a3(15, 1, 20);
-    cout << "a3 non sorted - " <<  a3 << endl;
+    // Array a3(15, 1, 20);
+    // cout << "a3 non sorted - " <<  a3 << endl;
 
-    a3.Hoar_sort();
-    cout << "a3 sorted " << a3 << endl;
+    // a3.Hoar_sort();
+    // cout << "a3 sorted " << a3 << endl;
 
-    Array a4(15, 1, 500);
-    cout << a4;
-
-    a4.Bit_sort();
-    cout << a4;
 
 
     return 0;
