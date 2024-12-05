@@ -163,44 +163,46 @@ public:
             }
         }
     }
-
-    void help_Heap(int n, int i)
+    
+    void heap_help(int n, int i)
     {
-        int largest = i;
-        int left = 2 * i + 1;
-        int right = 2 * i + 2;
-
-        if(left < n && a[left] > a[largest])
-            largest = left;
-
-        if(right < n && a[right] > a[largest])
-            largest = right;
-
-        if(largest != i)
+        int j = 2 * i + 1;
+        int x = a[i];
+        bool flag = true;
+        
+        while(j < n && flag)
         {
-            swap(a[i], a[largest]);
-
-            help_Heap(n, largest);
+            if(j + 1 < n  && a[j + 1] > a[i])
+                j++;
+            
+            if(a[j] > x)
+            {
+                a[i] = a[j];
+                i = j;
+                j = 2 * i + 1;
+            }
+            else
+                flag = false;
+            
         }
-        for(int i = 0; i < n; i++)
-        {
-            cout << a[i] << "  ";
-        }
-        cout << endl;
+        a[i] = x;
     }
 
     void Heap_sort()
     {
         for(int i = n / 2 - 1; i >= 0; i--)
-            help_Heap(n, i);
+            heap_help(n, i);
 
         for(int i = n - 1;  i >= 0; i--)
         {
             swap(a[0], a[i]);
 
-            help_Heap(i, 0);
+            heap_help(i, 0);
         }
     }
+    //Постройте max-heap из входных данных.
+    //На данном этапе самый большой элемент хранится в корне кучи. Замените его на последний элемент кучи, а затем уменьшите ее размер на 1. Наконец, преобразуйте полученное дерево в max-heap с новым корнем.
+    //Повторяйте вышеуказанные шаги, пока размер кучи больше 1
 
     int change(int *arr, int left, int right)
     {
@@ -275,11 +277,10 @@ int main()
     // a1.Shell_sort();
     // cout << "a1 sorted " << a1 << endl;
     
-    int a[7] = {5, 1, 7, 14, 9, 8, 4};
+    // int a[7] = {5, 1, 7, 14, 9, 8, 4};
+    // Array a2(a, 7);
 
-
-    // Array a2(10, 1, 10);
-    Array a2(a, 7);
+    Array a2(10, 1, 10);
     cout << "a2 non sorted - " << a2 << endl;
 
 
