@@ -172,7 +172,7 @@ public:
         
         while(j < n && flag)
         {
-            if(j + 1 < n  && a[j + 1] > a[i])
+            if(j + 1 < n  && a[j + 1] > a[j])
                 j++;
             
             if(a[j] > x)
@@ -268,7 +268,7 @@ public:
 
 int main()
 {
-    //srand(time(0));
+    srand(time(0));
 
     // Array a1(10, 1, 20);
     // cout << "a1 non sorted - " << a1;
