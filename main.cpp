@@ -1,8 +1,6 @@
 #include <iostream>
-#include <ctime>
 #include <algorithm>
-
-
+#include <chrono>
 
 using namespace std;
 
@@ -126,14 +124,14 @@ public:
         if (n != other.n)
             return false;
     int len = n;
-    for (int i = 0; i < n; i++) 
+    for (int i = 0; i < n; i++)
     {
         bool fl = false;
-        for (int j = 0; j < len; j++) 
+        for (int j = 0; j < len; j++)
         {
             if (a[i] == other.a[j])
             {
-                
+
                 fl = true;
                 other[j] = other[len - 1];
                 len--;
@@ -150,11 +148,11 @@ public:
     {
         for(int step = n / 2; step > 0; step /= 2)//начинаем с половины масива
         {
-            for(int i = 1; i < n; i+=step)//елемент i  сравниваем с элементом i + step 
+            for(int i = 1; i < n; i+=step)//елемент i  сравниваем с элементом i + step
             {
                 int tmp = a[i];//запоминаем текущий элемент
                 int j;
-                
+
                 for(j = i; j >= step && a[j - step] > tmp; j -= step)//првоерка что мы не вышли за масив
                 {
                     a[j] = a[j - step];//сдвигаем влево
@@ -163,18 +161,18 @@ public:
             }
         }
     }
-    
+
     void heap_help(int n, int i)
     {
         int j = 2 * i + 1;
         int x = a[i];
         bool flag = true;
-        
+
         while(j < n && flag)
         {
             if(j + 1 < n  && a[j + 1] > a[j])
                 j++;
-            
+
             if(a[j] > x)
             {
                 a[i] = a[j];
@@ -183,7 +181,7 @@ public:
             }
             else
                 flag = false;
-            
+
         }
         a[i] = x;
     }
@@ -265,34 +263,47 @@ public:
 
 };
 
+void test()
+{
+    Array a1(100, 3);
+    Array a2(100, 3);
+    Array a3(100, 3);
+
+    using chrono::high_resolution_clock;//позволяет измерять время с высокой точностью
+    using chrono::duration_cast;// конвертирует значение длительности в другой тип длительности, учитывая различия в их периодах
+    using chrono::duration;//для интервала времени
+    using chrono::milliseconds;//using milliseconds = duration<long long, milli>;
+
+    auto time1 = high_resolution_clock::now();
+    a1.Shell_sort();
+    auto time2 = high_resolution_clock::now();
+
+    duration <double, milli> timeMs = time2 - time1;
+    cout << "Shell_sort - " << timeMs.count() << " ms" << endl;
+
+
+    time1 = high_resolution_clock::now();
+    a1.Heap_sort();
+    time2 = high_resolution_clock::now();
+
+    timeMs = time2 - time1;
+    cout << "Heap_sort -  " << timeMs.count() << " ms" << endl;\
+
+
+    time1 = high_resolution_clock::now();
+    a1.Hoar_sort();
+    time2 = high_resolution_clock::now();
+
+    timeMs = time2 - time1;
+    cout << "Hoar_sort -  " << timeMs.count() << " ms" << endl;
+
+}
 
 int main()
 {
     srand(time(0));
 
-    // Array a1(10, 1, 20);
-    // cout << "a1 non sorted - " << a1;
-
-
-    // a1.Shell_sort();
-    // cout << "a1 sorted " << a1 << endl;
-    
-    // int a[7] = {5, 1, 7, 14, 9, 8, 4};
-    // Array a2(a, 7);
-
-    Array a2(10, 1, 10);
-    cout << "a2 non sorted - " << a2 << endl;
-
-
-    a2.Heap_sort();
-    cout << "a2 sorted " << a2 << endl;
-
-    // Array a3(15, 1, 20);
-    // cout << "a3 non sorted - " <<  a3 << endl;
-
-    // a3.Hoar_sort();
-    // cout << "a3 sorted " << a3 << endl;
-
+    test();
 
 
     return 0;
