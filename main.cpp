@@ -265,9 +265,9 @@ public:
 
 void test()
 {
-    Array a1(100, 3);
-    Array a2(100, 3);
-    Array a3(100, 3);
+    Array a1(10000, 1, 10000);
+    Array a2 = a1;
+    Array a3 = a2;
 
     using chrono::high_resolution_clock;//позволяет измерять время с высокой точностью
     using chrono::duration_cast;// конвертирует значение длительности в другой тип длительности, учитывая различия в их периодах
@@ -283,7 +283,7 @@ void test()
 
 
     time1 = high_resolution_clock::now();
-    a1.Heap_sort();
+    a2.Heap_sort();
     time2 = high_resolution_clock::now();
 
     timeMs = time2 - time1;
@@ -291,7 +291,7 @@ void test()
 
 
     time1 = high_resolution_clock::now();
-    a1.Hoar_sort();
+    a3.Hoar_sort();
     time2 = high_resolution_clock::now();
 
     timeMs = time2 - time1;
